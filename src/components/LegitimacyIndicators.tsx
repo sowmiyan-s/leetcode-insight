@@ -11,19 +11,20 @@ interface Indicator {
 interface LegitimacyIndicatorsProps {
   indicators: Indicator[];
   overallScore: number;
-<<<<<<< HEAD
   legitimacyProbability: number;
   activeDays?: number;
   totalSolved?: number;
   submissionCount?: number;
 }
 
-export const LegitimacyIndicators = ({ indicators, overallScore, legitimacyProbability, activeDays, totalSolved, submissionCount }: LegitimacyIndicatorsProps) => {
-=======
-}
-
-export const LegitimacyIndicators = ({ indicators, overallScore }: LegitimacyIndicatorsProps) => {
->>>>>>> 9b4dd41b34cd7e828eff5a1d974a243df63165eb
+export const LegitimacyIndicators = ({
+  indicators,
+  overallScore,
+  legitimacyProbability,
+  activeDays,
+  totalSolved,
+  submissionCount
+}: LegitimacyIndicatorsProps) => {
   const getOverallStatus = (score: number) => {
     if (score >= 80) return { icon: ShieldCheck, label: 'Highly Authentic', color: 'text-emerald-400' };
     if (score >= 60) return { icon: Shield, label: 'Mostly Authentic', color: 'text-amber-400' };
@@ -55,10 +56,6 @@ export const LegitimacyIndicators = ({ indicators, overallScore }: LegitimacyInd
     }
   };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 9b4dd41b34cd7e828eff5a1d974a243df63165eb
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -66,11 +63,7 @@ export const LegitimacyIndicators = ({ indicators, overallScore }: LegitimacyInd
       transition={{ duration: 0.5, delay: 0.4 }}
       className="glass-card p-6"
     >
-<<<<<<< HEAD
       <div className="flex items-center justify-between mb-4">
-=======
-      <div className="flex items-center justify-between mb-6">
->>>>>>> 9b4dd41b34cd7e828eff5a1d974a243df63165eb
         <h3 className="text-lg font-semibold">Legitimacy Analysis</h3>
         <div className={cn("flex items-center gap-2", status.color)}>
           <StatusIcon className="w-5 h-5" />
@@ -78,8 +71,6 @@ export const LegitimacyIndicators = ({ indicators, overallScore }: LegitimacyInd
         </div>
       </div>
 
-<<<<<<< HEAD
-      {/* Probability summary */}
       <div className="mb-4">
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Legitimacy Probability:</span>
@@ -92,8 +83,6 @@ export const LegitimacyIndicators = ({ indicators, overallScore }: LegitimacyInd
         </div>
       </div>
 
-=======
->>>>>>> 9b4dd41b34cd7e828eff5a1d974a243df63165eb
       <div className="space-y-3">
         {indicators.map((indicator, index) => (
           <motion.div
@@ -119,8 +108,8 @@ export const LegitimacyIndicators = ({ indicators, overallScore }: LegitimacyInd
         <div className="flex items-start gap-3">
           <Info className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
           <p className="text-sm text-muted-foreground">
-            This analysis is based on patterns in submission history, problem-solving consistency, 
-            and typical behavior metrics. It's not a definitive determination but rather an indicator 
+            This analysis is based on patterns in submission history, problem-solving consistency,
+            and typical behavior metrics. It's not a definitive determination but rather an indicator
             of profile authenticity.
           </p>
         </div>

@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { Shield, ShieldAlert, ShieldCheck, Trophy, Target, Flame, Code2, Star, Award } from 'lucide-react';
+import { Shield, ShieldAlert, ShieldCheck, Trophy, Target, Flame, Code2, Star, Award, Brain, Zap, Globe } from 'lucide-react';
 import { LegitimacyIndicator } from '@/types/leetcode';
 
 interface ShareableCardProps {
@@ -11,8 +11,7 @@ interface ShareableCardProps {
     diversity: number;
     legitimacy: number;
   };
-  legitimacyProbability?: number; // 0-1
-  lastUpdated?: string; // ISO string
+  legitimacyProbability?: number;
   stats: {
     totalSolved: number;
     easySolved: number;
@@ -21,223 +20,271 @@ interface ShareableCardProps {
     ranking?: number;
     streak: number;
     contestRating?: number;
+    languages?: { name: string; value: number }[];
+  };
+  aiAnalysis?: {
+    summary: string;
+    strengths: string[];
+    careerOutlook: string;
   };
   indicators: LegitimacyIndicator[];
 }
 
-type ValidityStatus = 'valid' | 'caution' | 'suspicious';
-
-const getValidityStatus = (
-  legitimacyScore: number,
-  indicators: LegitimacyIndicator[]
-): ValidityStatus => {
-  const hasSuspicious = indicators.some((i) => i.status === 'suspicious');
-  const hasWarning = indicators.some((i) => i.status === 'warning');
-
-  if (legitimacyScore < 50 || hasSuspicious) return 'suspicious';
-  if (legitimacyScore < 70 || hasWarning) return 'caution';
-  return 'valid';
-};
-
-const statusConfig = {
-  valid: {
-    label: 'VERIFIED PROFILE',
-    icon: ShieldCheck,
-    bgColor: 'bg-emerald-500/20',
-    borderColor: 'border-emerald-500/50',
-    textColor: 'text-emerald-400',
-    glowColor: 'shadow-emerald-500/30',
-  },
-  caution: {
-    label: 'NEEDS REVIEW',
-    icon: Shield,
-    bgColor: 'bg-amber-500/20',
-    borderColor: 'border-amber-500/50',
-    textColor: 'text-amber-400',
-    glowColor: 'shadow-amber-500/30',
-  },
-  suspicious: {
-    label: 'SUSPICIOUS ACTIVITY',
-    icon: ShieldAlert,
-    bgColor: 'bg-red-500/20',
-    borderColor: 'border-red-500/50',
-    textColor: 'text-red-400',
-    glowColor: 'shadow-red-500/30',
-  },
+const getPersona = (scores: { consistency: number; diversity: number; legitimacy: number; overall: number }) => {
+  if (scores.legitimacy < 60) return "The Enigmatic Coder";
+  if (scores.overall > 90) return "The Grandmaster";
+  if (scores.consistency > 85) return "The Unstoppable Climber";
+  if (scores.diversity > 85) return "The Polyglot Architect";
+  if (scores.overall > 70) return "Elite Problem Solver";
+  return "Rising Challenger";
 };
 
 export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
-  ({ username, avatar, scores, legitimacyProbability, lastUpdated, stats, indicators }, ref) => {
-    const status = getValidityStatus(scores.legitimacy, indicators);
-    const config = statusConfig[status];
-    const StatusIcon = config.icon;
+  ({ username, avatar, scores, legitimacyProbability, stats, aiAnalysis, indicators }, ref) => {
+    const persona = getPersona(scores);
 
-    const achievements = [
-      {
-        icon: Target,
-        label: 'Problems Solved',
-        value: stats.totalSolved.toLocaleString(),
-      },
-      {
-        icon: Trophy,
-        label: 'Global Rank',
-        value: stats.ranking ? `#${stats.ranking.toLocaleString()}` : 'N/A',
-      },
-      {
-        icon: Star,
-        label: 'Contest Rating',
-        value: stats.contestRating ? stats.contestRating.toLocaleString() : 'Unrated',
-      },
-      {
-        icon: Flame,
-        label: 'Current Streak',
-        value: `${stats.streak} days`,
-      },
-      {
-        icon: Code2,
-        label: 'Hard Problems',
-        value: stats.hardSolved.toString(),
-      },
+    // SVG Radar Logic
+    const size = 200;
+    const center = size / 2;
+    const r = 80;
+    const points = [
+      { label: 'Consistency', value: scores.consistency },
+      { label: 'Legitimacy', value: scores.legitimacy },
+      { label: 'Diversity', value: scores.diversity },
     ];
+
+    const getPoint = (index: number, value: number) => {
+      const angle = (index * 2 * Math.PI) / 3 - Math.PI / 2;
+      const dist = (value / 100) * r;
+      return `${center + dist * Math.cos(angle)},${center + dist * Math.sin(angle)}`;
+    };
+
+    const radarPath = points.map((p, i) => getPoint(i, p.value)).join(' ');
 
     return (
       <div
         ref={ref}
-        className="w-[1080px] h-[1350px] bg-gradient-to-br from-[hsl(220,20%,8%)] to-[hsl(220,20%,4%)] p-12 flex flex-col shadow-2xl rounded-3xl border border-[hsl(220,14%,18%)]"
+        className="w-[1080px] h-[1350px] bg-[hsl(220,30%,4%)] p-0 flex flex-col relative overflow-hidden"
         style={{ fontFamily: 'Inter, sans-serif' }}
       >
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1
-            className="text-4xl font-bold mb-2"
-            style={{
-              background: 'linear-gradient(135deg, hsl(38 92% 50%), hsl(25 95% 53%))',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            LEETCODE ANALYZER
-          </h1>
-          <p className="text-[hsl(220,9%,55%)] text-xl">Profile Verification Report</p>
-        </div>
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]" />
 
-        {/* Profile Section */}
-        <div className="flex items-center justify-center gap-6 mb-10">
-          {avatar && (
-            <img
-              src={avatar}
-              alt={username}
-              className="w-24 h-24 rounded-full border-4 border-[hsl(38,92%,50%)]"
-            />
-          )}
-          <div className="text-center">
-            <p className="text-3xl font-bold text-[hsl(60,9%,98%)]">@{username}</p>
+        {/* Top Header Bar */}
+        <div className="h-4 bg-gradient-to-r from-primary via-accent to-primary" />
+
+        <div className="p-12 flex-1 flex flex-col">
+          {/* Header */}
+          <div className="flex justify-between items-start mb-12">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Brain className="w-6 h-6 text-primary" />
+                <span className="text-primary font-bold tracking-[0.3em] text-sm uppercase">Intelligence Report</span>
+              </div>
+              <h1 className="text-5xl font-black text-white tracking-tighter">
+                LEETCODE <span className="text-primary">INSIGHT</span>
+              </h1>
+            </div>
+            <div className="text-right">
+              <p className="text-[hsl(220,9%,55%)] font-mono text-sm uppercase tracking-widest">Serial Index</p>
+              <p className="text-white font-mono font-bold">LC-{Math.random().toString(36).substring(2, 8).toUpperCase()}</p>
+            </div>
           </div>
-        </div>
 
-        {/* Status Badge & Legitimacy Probability */}
-        <div className="flex flex-col items-center mb-10">
-          <div
-            className={`${config.bgColor} ${config.borderColor} border-2 rounded-2xl px-12 py-8 flex flex-col items-center shadow-2xl ${config.glowColor}`}
-          >
-            <StatusIcon className={`w-20 h-20 ${config.textColor} mb-4`} />
-            <span className={`text-3xl font-bold ${config.textColor}`}>{config.label}</span>
-            <span className="text-[hsl(220,9%,55%)] text-xl mt-2">
-              Legitimacy Score: {scores.legitimacy}/100
-            </span>
-            {typeof legitimacyProbability === 'number' && (
-              <div className="w-full mt-6">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-lg text-[hsl(220,9%,55%)] font-medium">Legitimacy Probability</span>
-                  <span className="text-lg font-bold text-emerald-400">{Math.round(legitimacyProbability * 100)}%</span>
-                </div>
-                <div className="w-full h-4 bg-[hsl(220,14%,14%)] rounded-full overflow-hidden">
-                  <div
-                    className="h-4 bg-gradient-to-r from-emerald-400 to-amber-400 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.round(legitimacyProbability * 100)}%` }}
-                  />
+          {/* Profile Hero Section */}
+          <div className="flex items-center gap-8 mb-12 bg-white/5 border border-white/10 p-8 rounded-[2rem] backdrop-blur-md">
+            <div className="relative">
+              <img
+                src={avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${username}`}
+                alt={username}
+                className="w-32 h-32 rounded-3xl border-2 border-primary/50 object-cover"
+              />
+              <div className="absolute -bottom-3 -right-3 bg-primary text-black font-black px-4 py-1 rounded-full text-xs skew-x-[-12deg]">
+                VERIFIED
+              </div>
+            </div>
+            <div>
+              <h2 className="text-4xl font-black text-white mb-1 tracking-tight">@{username}</h2>
+              <div className="flex items-center gap-3">
+                <span className="text-xl text-primary font-bold">{persona}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                <span className="text-[hsl(220,9%,55%)] flex items-center gap-1">
+                  <Globe className="w-4 h-4" /> Global Ranking: {stats.ranking ? `#${stats.ranking.toLocaleString()}` : 'N/A'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-12 gap-8 flex-1">
+            {/* Left Column: Stats & Radar */}
+            <div className="col-span-7 space-y-8">
+              {/* Radar Chart & Key Scores */}
+              <div className="bg-white/5 border border-white/10 p-8 rounded-3xl relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-6">
+                    <div>
+                      <p className="text-[hsl(220,9%,55%)] text-xs font-bold uppercase tracking-widest mb-1">Overall Core Score</p>
+                      <p className="text-6xl font-black text-primary">{scores.overall}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-[hsl(220,9%,55%)] text-[10px] font-bold uppercase mb-1">Consistency</p>
+                        <p className="text-xl font-bold text-white">{scores.consistency}/100</p>
+                      </div>
+                      <div>
+                        <p className="text-[hsl(220,9%,55%)] text-[10px] font-bold uppercase mb-1">Diversity</p>
+                        <p className="text-xl font-bold text-white">{scores.diversity}/100</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Custom SVG Radar */}
+                  <div className="relative">
+                    <svg width={size} height={size} className="drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]">
+                      {/* Background hex */}
+                      <polygon points="100,20 169,140 31,140" fill="none" stroke="white" strokeWidth="1" strokeOpacity="0.1" />
+                      <circle cx={center} cy={center} r={r} fill="none" stroke="white" strokeWidth="1" strokeOpacity="0.05" />
+                      <circle cx={center} cy={center} r={r / 2} fill="none" stroke="white" strokeWidth="1" strokeOpacity="0.05" />
+                      {/* Active Path */}
+                      <polygon
+                        points={radarPath}
+                        fill="rgba(249,115,22,0.2)"
+                        stroke="rgba(249,115,22,1)"
+                        strokeWidth="3"
+                      />
+                    </svg>
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
-          {lastUpdated && (
-            <span className="mt-2 text-sm text-[hsl(220,9%,55%)]">Last updated: {new Date(lastUpdated).toLocaleString()}</span>
-          )}
-        </div>
 
-        {/* Top Achievements */}
-        <div className="bg-[hsl(220,18%,10%)] rounded-2xl p-8 mb-8 border border-[hsl(220,14%,18%)]">
-          <div className="flex items-center gap-3 mb-6">
-            <Award className="w-8 h-8 text-[hsl(38,92%,50%)]" />
-            <h2 className="text-2xl font-bold text-[hsl(60,9%,98%)]">TOP ACHIEVEMENTS</h2>
-          </div>
-          <div className="space-y-4">
-            {achievements.map((achievement, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between py-3 border-b border-[hsl(220,14%,18%)] last:border-0"
-              >
-                <div className="flex items-center gap-4">
-                  <achievement.icon className="w-6 h-6 text-[hsl(38,92%,50%)]" />
-                  <span className="text-xl text-[hsl(220,9%,55%)]">{achievement.label}</span>
-                </div>
-                <span className="text-2xl font-bold text-[hsl(60,9%,98%)]">{achievement.value}</span>
+              {/* Solved Stats Grid */}
+              <div className="grid grid-cols-3 gap-6">
+                {[
+                  { label: 'Easy', value: stats.easySolved, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+                  { label: 'Medium', value: stats.mediumSolved, color: 'text-amber-400', bg: 'bg-amber-400/10' },
+                  { label: 'Hard', value: stats.hardSolved, color: 'text-red-400', bg: 'bg-red-400/10' },
+                ].map((s) => (
+                  <div key={s.label} className={`${s.bg} p-6 rounded-2xl border border-white/5 text-center`}>
+                    <p className={`text-4xl font-black ${s.color} mb-1`}>{s.value}</p>
+                    <p className="text-xs text-[hsl(220,9%,55%)] font-bold uppercase tracking-widest">{s.label}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Problem Breakdown */}
-        <div className="bg-[hsl(220,18%,10%)] rounded-2xl p-8 mb-8 border border-[hsl(220,14%,18%)]">
-          <h2 className="text-2xl font-bold text-[hsl(60,9%,98%)] mb-6">PROBLEM BREAKDOWN</h2>
-          <div className="flex justify-between">
-            <div className="text-center flex-1">
-              <p className="text-4xl font-bold text-emerald-400">{stats.easySolved}</p>
-              <p className="text-lg text-[hsl(220,9%,55%)]">Easy</p>
+              {/* Language Proficiency */}
+              <div className="bg-white/5 border border-white/10 p-8 rounded-3xl">
+                <h3 className="text-white font-bold mb-6 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-primary" /> Language Specialization
+                </h3>
+                <div className="space-y-4">
+                  {(stats.languages || []).slice(0, 3).map((l, i) => {
+                    const percentage = (l.value / stats.totalSolved) * 100;
+                    return (
+                      <div key={l.name} className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-white font-medium">{l.name}</span>
+                          <span className="text-[hsl(220,9%,55%)]">{l.value} solved</span>
+                        </div>
+                        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                            style={{ width: `${Math.min(100, percentage)}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-            <div className="text-center flex-1">
-              <p className="text-4xl font-bold text-amber-400">{stats.mediumSolved}</p>
-              <p className="text-lg text-[hsl(220,9%,55%)]">Medium</p>
-            </div>
-            <div className="text-center flex-1">
-              <p className="text-4xl font-bold text-red-400">{stats.hardSolved}</p>
-              <p className="text-lg text-[hsl(220,9%,55%)]">Hard</p>
+
+            {/* Right Column: AI & Legitimacy */}
+            <div className="col-span-5 space-y-8">
+              {/* AI Key Insight */}
+              <div className="bg-primary p-8 rounded-3xl text-black h-fit shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                  <Brain className="w-24 h-24" />
+                </div>
+                <h3 className="font-black uppercase tracking-widest text-xs mb-4 flex items-center gap-2">
+                  <Brain className="w-4 h-4" /> AI Key Insight
+                </h3>
+                <p className="text-lg font-bold italic leading-relaxed">
+                  "{aiAnalysis?.summary || "AI is finalizing the evaluation of this profile's trajectory and potential."}"
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2 text-[10px] font-black uppercase">
+                  {aiAnalysis?.strengths.slice(0, 2).map(s => (
+                    <span key={s} className="bg-black text-primary px-3 py-1 rounded-full">{s}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Legitimacy Breakdown */}
+              <div className="bg-white/5 border border-white/10 p-8 rounded-3xl">
+                <h3 className="text-white font-bold mb-6 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" /> Authenticity Verification
+                </h3>
+                <div className="space-y-4">
+                  <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs text-[hsl(220,9%,55%)] font-bold uppercase">Confidence Index</span>
+                      <span className="text-emerald-400 font-bold">{Math.round((legitimacyProbability || 0) * 100)}%</span>
+                    </div>
+                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-400 rounded-full"
+                        style={{ width: `${Math.round((legitimacyProbability || 0) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {indicators.slice(0, 3).map((ind, i) => (
+                      <div key={i} className="flex gap-3 items-start p-3 bg-white/5 rounded-xl text-[10px]">
+                        <div className={`mt-0.5 w-2 h-2 rounded-full shrink-0 ${ind.status === 'good' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                        <div>
+                          <p className="text-white font-bold mb-0.5">{ind.label}</p>
+                          <p className="text-[hsl(220,9%,55%)] leading-tight line-clamp-2">{ind.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats Mini Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 border border-white/10 p-6 rounded-2xl">
+                  <Flame className="w-6 h-6 text-orange-500 mb-2" />
+                  <p className="text-2xl font-black text-white">{stats.streak}</p>
+                  <p className="text-[10px] text-[hsl(220,9%,55%)] font-bold uppercase">Max Streak</p>
+                </div>
+                <div className="bg-white/5 border border-white/10 p-6 rounded-2xl">
+                  <Star className="w-6 h-6 text-yellow-400 mb-2" />
+                  <p className="text-2xl font-black text-white">{stats.contestRating || '---'}</p>
+                  <p className="text-[10px] text-[hsl(220,9%,55%)] font-bold uppercase">Rating</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Score Breakdown */}
-        <div className="bg-[hsl(220,18%,10%)] rounded-2xl p-8 border border-[hsl(220,14%,18%)]">
-          <h2 className="text-2xl font-bold text-[hsl(60,9%,98%)] mb-6">SCORE BREAKDOWN</h2>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="text-center p-4 bg-[hsl(220,14%,14%)] rounded-xl">
-              <p className="text-5xl font-bold text-[hsl(38,92%,50%)]">{scores.overall}</p>
-              <p className="text-lg text-[hsl(220,9%,55%)]">Overall</p>
+          {/* Footer Card */}
+          <div className="mt-12 pt-8 border-t border-white/10 flex justify-between items-end">
+            <div>
+              <p className="text-[hsl(220,9%,55%)] text-xs font-medium">Generated by</p>
+              <p className="text-white font-black tracking-widest text-lg">LEETCODE INSIGHT AI</p>
             </div>
-            <div className="text-center p-4 bg-[hsl(220,14%,14%)] rounded-xl">
-              <p className="text-5xl font-bold text-[hsl(60,9%,98%)]">{scores.consistency}</p>
-              <p className="text-lg text-[hsl(220,9%,55%)]">Consistency</p>
-            </div>
-            <div className="text-center p-4 bg-[hsl(220,14%,14%)] rounded-xl">
-              <p className="text-5xl font-bold text-[hsl(60,9%,98%)]">{scores.diversity}</p>
-              <p className="text-lg text-[hsl(220,9%,55%)]">Diversity</p>
-            </div>
-            <div className="text-center p-4 bg-[hsl(220,14%,14%)] rounded-xl">
-              <p className="text-5xl font-bold text-[hsl(60,9%,98%)]">{scores.legitimacy}</p>
-              <p className="text-lg text-[hsl(220,9%,55%)]">Legitimacy</p>
+            <div className="flex items-center gap-6">
+              <div className="text-right">
+                <p className="text-[hsl(220,9%,55%)] text-[10px] font-bold uppercase">Verification Date</p>
+                <p className="text-white font-mono text-sm">{new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}</p>
+              </div>
+              {/* Fake QR code area */}
+              <div className="w-16 h-16 bg-white p-1 rounded-lg">
+                <div className="w-full h-full bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://leetcode.com/u/${username}')] bg-cover" />
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-auto pt-8 text-center">
-          <p className="text-[hsl(220,9%,55%)] text-lg">
-            Generated by LeetCode Analyzer • {new Date().toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </p>
         </div>
       </div>
     );

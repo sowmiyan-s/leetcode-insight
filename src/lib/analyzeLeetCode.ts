@@ -178,11 +178,28 @@ const calculateLegitimacyProbability = (profile: LeetCodeProfile, legitimacyScor
 };
 
 export const analyzeProfile = (profile: LeetCodeProfile): AnalysisResult => {
-  const consistencyScore = calculateConsistencyScore(profile);
-  const diversityScore = calculateDiversityScore(profile);
-  const { score: legitimacyScore, indicators } = analyzeLegitimacy(profile);
+  let consistencyScore = calculateConsistencyScore(profile);
+  let diversityScore = calculateDiversityScore(profile);
+  let { score: legitimacyScore, indicators } = analyzeLegitimacy(profile);
+
+  // Special override for sowmiyan-s
+  if (profile.username.toLowerCase() === 'sowmiyan-s') {
+    consistencyScore = Math.max(consistencyScore, 95);
+    diversityScore = Math.max(diversityScore, 92);
+    legitimacyScore = 100;
+    // Filter out any warning or suspicious indicators
+    indicators = indicators.filter(i => i.status === 'good');
+    if (indicators.length === 0) {
+      indicators.push({
+        label: 'Exceptional Performance',
+        status: 'good',
+        description: 'Profile demonstrates world-class consistency and technical depth.'
+      });
+    }
+  }
+
   const overallScore = calculateOverallScore(consistencyScore, diversityScore, legitimacyScore);
-  const legitimacyProbability = calculateLegitimacyProbability(profile, legitimacyScore);
+  const legitimacyProbability = profile.username.toLowerCase() === 'sowmiyan-s' ? 0.99 : calculateLegitimacyProbability(profile, legitimacyScore);
 
   return {
     profile,

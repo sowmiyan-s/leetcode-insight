@@ -198,7 +198,9 @@ const Index = () => {
               ranking: analysis.profile.ranking,
               streak: analysis.profile.streak,
               contestRating: analysis.profile.contestRating,
+              languages: analysis.profile.languages,
             }}
+            aiAnalysis={aiAnalysis || undefined}
             indicators={analysis.indicators}
             legitimacyProbability={analysis.legitimacyProbability}
           />

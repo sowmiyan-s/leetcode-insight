@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Loader2, Code2 } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 
 interface HeroSectionProps {
   onAnalyze: (username: string) => void;
@@ -31,13 +31,6 @@ export const HeroSection = ({ onAnalyze, isLoading }: HeroSectionProps) => {
       {/* Background glow effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse-slow" />
-      </div>
-
-      {/* Logo/Icon */}
-      <div className="relative mb-8 animate-float">
-        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/30">
-          <Code2 className="w-10 h-10 text-primary-foreground" />
-        </div>
       </div>
 
       {/* Title */}

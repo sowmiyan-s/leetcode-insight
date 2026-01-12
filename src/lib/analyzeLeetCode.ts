@@ -3,41 +3,41 @@ import { LeetCodeProfile, LegitimacyIndicator, AnalysisResult } from '@/types/le
 // Calculate consistency score based on submission patterns
 const calculateConsistencyScore = (profile: LeetCodeProfile): number => {
   const { streak, activeDays, totalSolved } = profile;
-  
+
   // Streak contribution (max 30 points)
   const streakScore = Math.min(streak / 30 * 30, 30);
-  
+
   // Active days contribution (max 40 points)
   const activeDaysScore = Math.min(activeDays / 200 * 40, 40);
-  
+
   // Problems per active day ratio (max 30 points)
   const problemsPerDay = activeDays > 0 ? totalSolved / activeDays : 0;
-  const ratioScore = problemsPerDay > 0.5 && problemsPerDay < 5 ? 30 : 
-                    problemsPerDay >= 5 ? 15 : problemsPerDay * 60;
-  
+  const ratioScore = problemsPerDay > 0.5 && problemsPerDay < 5 ? 30 :
+    problemsPerDay >= 5 ? 15 : problemsPerDay * 60;
+
   return Math.round(streakScore + activeDaysScore + ratioScore);
 };
 
 // Calculate diversity score based on problem difficulty and languages
 const calculateDiversityScore = (profile: LeetCodeProfile): number => {
   const { easySolved, mediumSolved, hardSolved, totalSolved, languages } = profile;
-  
+
   if (totalSolved === 0) return 0;
-  
+
   // Difficulty distribution (max 50 points)
   const easyRatio = easySolved / totalSolved;
   const mediumRatio = mediumSolved / totalSolved;
   const hardRatio = hardSolved / totalSolved;
-  
+
   // Ideal distribution: ~30% easy, ~50% medium, ~20% hard
-  const distributionScore = 50 - Math.abs(0.3 - easyRatio) * 50 
-                           - Math.abs(0.5 - mediumRatio) * 30 
-                           - Math.abs(0.2 - hardRatio) * 40;
-  
+  const distributionScore = 50 - Math.abs(0.3 - easyRatio) * 50
+    - Math.abs(0.5 - mediumRatio) * 30
+    - Math.abs(0.2 - hardRatio) * 40;
+
   // Language diversity (max 50 points)
   const languageCount = languages.length;
   const languageScore = Math.min(languageCount * 10, 50);
-  
+
   return Math.round(Math.max(0, distributionScore + languageScore));
 };
 
@@ -45,9 +45,9 @@ const calculateDiversityScore = (profile: LeetCodeProfile): number => {
 const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicators: LegitimacyIndicator[] } => {
   const indicators: LegitimacyIndicator[] = [];
   let score = 100;
-  
+
   const { totalSolved, activeDays, streak, hardSolved, contestRating, contestsAttended, recentSubmissions } = profile;
-  
+
   // Check 1: Problems per active day ratio
   const problemsPerDay = activeDays > 0 ? totalSolved / activeDays : 0;
   if (problemsPerDay > 8) {
@@ -71,7 +71,7 @@ const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicator
       description: `Average of ${problemsPerDay.toFixed(1)} problems per day is within normal range.`,
     });
   }
-  
+
   // Check 2: Hard problems vs contest rating
   if (hardSolved > 100 && contestRating < 1600 && contestsAttended > 5) {
     score -= 15;
@@ -87,12 +87,12 @@ const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicator
       description: 'Contest performance aligns with problem-solving statistics.',
     });
   }
-  
+
   // Check 3: Submission pattern consistency
   const recentCounts = recentSubmissions.slice(0, 30).map(s => s.count);
   const avgRecent = recentCounts.reduce((a, b) => a + b, 0) / (recentCounts.length || 1);
   const hasSpikes = recentCounts.some(c => c > avgRecent * 5 && c > 10);
-  
+
   if (hasSpikes) {
     score -= 10;
     indicators.push({
@@ -107,7 +107,7 @@ const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicator
       description: 'Submission activity shows natural, consistent patterns.',
     });
   }
-  
+
   // Check 4: Active streak vs total solved
   if (streak > 100 && totalSolved < 200) {
     indicators.push({
@@ -122,12 +122,12 @@ const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicator
       description: `${streak}-day active streak shows regular practice habits.`,
     });
   }
-  
+
   // Check 5: Language usage patterns
-  const topLanguagePercentage = profile.languages.length > 0 
-    ? (profile.languages[0].value / totalSolved) * 100 
+  const topLanguagePercentage = profile.languages.length > 0
+    ? (profile.languages[0].value / totalSolved) * 100
     : 0;
-  
+
   if (topLanguagePercentage > 95 && profile.languages.length === 1) {
     indicators.push({
       label: 'Single Language Focus',
@@ -142,7 +142,7 @@ const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicator
       description: `Uses ${profile.languages.length} programming languages, showing versatility.`,
     });
   }
-  
+
   return { score: Math.max(0, score), indicators };
 };
 
@@ -159,7 +159,6 @@ const calculateOverallScore = (
     legitimacyScore * 0.5
   );
 };
-
 
 // Calculate legitimacy probability (0-1) based on key metrics and legitimacy score
 const calculateLegitimacyProbability = (profile: LeetCodeProfile, legitimacyScore: number): number => {
@@ -184,6 +183,7 @@ export const analyzeProfile = (profile: LeetCodeProfile): AnalysisResult => {
   const { score: legitimacyScore, indicators } = analyzeLegitimacy(profile);
   const overallScore = calculateOverallScore(consistencyScore, diversityScore, legitimacyScore);
   const legitimacyProbability = calculateLegitimacyProbability(profile, legitimacyScore);
+
   return {
     profile,
     scores: {

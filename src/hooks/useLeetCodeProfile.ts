@@ -38,8 +38,8 @@ export const useLeetCodeProfile = (pollingIntervalMs: number = 0) => {
       setError(message);
       toast({
         title: 'Error',
-        description: message === 'User not found' 
-          ? `Could not find LeetCode user "${user}"` 
+        description: message === 'User not found'
+          ? `Could not find LeetCode user "${user}"`
           : 'Failed to fetch profile. Please try again.',
         variant: 'destructive',
       });

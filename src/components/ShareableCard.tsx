@@ -47,6 +47,12 @@ const getRoleBadge = (overall: number) => {
   return "CHALLENGER";
 };
 
+const getSecurityLevel = (legitimacy: number) => {
+  if (legitimacy >= 85) return { label: 'SECURE', color: 'bg-emerald-500', icon: ShieldCheck };
+  if (legitimacy >= 60) return { label: 'MODERATE', color: 'bg-amber-500', icon: Shield };
+  return { label: 'RISK DETECTED', color: 'bg-red-500', icon: ShieldAlert };
+};
+
 export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
   ({ username, avatar, scores, legitimacyProbability, stats, aiAnalysis, indicators }, ref) => {
     const persona = getPersona(scores);
@@ -111,14 +117,14 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
         {/* Top Header Bar */}
         <div className="h-4 bg-gradient-to-r from-primary via-accent to-primary relative z-10" />
 
-        <div className="p-16 flex-1 flex flex-col relative z-20">
+        <div className="px-14 py-10 flex-1 flex flex-col relative z-20">
           {/* Header */}
-          <div className="flex justify-between items-start mb-16">
+          <div className="flex justify-between items-start mb-8">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <Brain className="w-8 h-8 text-primary animate-pulse" />
+                <Zap className="w-8 h-8 text-primary animate-pulse" />
                 <span className="text-primary font-bold tracking-[0.4em] text-xs uppercase bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
-                  Neural Intelligence Node
+                  AI ANALYTICAL ENGINE
                 </span>
               </div>
               <h1 className="text-6xl font-black text-white tracking-tighter pt-4">
@@ -127,13 +133,13 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
             </div>
             <div className="flex flex-col items-end">
               <Fingerprint className="w-12 h-12 text-white/20 mb-2" />
-              <p className="text-[hsl(220,9%,55%)] font-mono text-[10px] uppercase tracking-[0.3em]">Cryptographic ID</p>
+              <p className="text-[hsl(220,9%,55%)] font-mono text-[10px] uppercase tracking-[0.3em]">REPORT SERIAL ID</p>
               <p className="text-white font-mono font-bold text-lg">#{cryptoId}</p>
             </div>
           </div>
 
           {/* Profile Hero Section - Super Glassmorphism */}
-          <div className="flex items-center gap-10 mb-12 bg-white/5 border border-white/20 p-10 rounded-[3rem] backdrop-blur-2xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center gap-10 mb-8 bg-white/5 border border-white/20 p-8 rounded-[3rem] backdrop-blur-2xl shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)]">
             <div className="relative group">
               <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl group-hover:bg-primary/50 transition-all duration-500" />
               <img
@@ -144,9 +150,29 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
               <div className="absolute -bottom-4 -right-4 bg-primary text-black font-black px-6 py-2 rounded-2xl text-sm skew-x-[-8deg] shadow-xl z-20 border-2 border-black/10">
                 {getRoleBadge(scores.overall)}
               </div>
+              <div className="absolute -top-4 -left-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-2 flex items-center gap-2 shadow-2xl">
+                <span className="text-[10px] font-black text-white/50 uppercase tracking-widest">Solved</span>
+                <span className="text-xl font-black text-white leading-none">{stats.totalSolved}</span>
+              </div>
             </div>
-            <div className="space-y-2">
-              <h2 className="text-5xl font-black text-white mb-2 tracking-tight drop-shadow-lg">@{username}</h2>
+            <div className="space-y-4">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-5xl font-black text-white tracking-tight drop-shadow-lg">@{username}</h2>
+                <div className="flex items-center gap-3">
+                  {(() => {
+                    const security = getSecurityLevel(scores.legitimacy);
+                    const SecurityIcon = security.icon;
+                    return (
+                      <div className={`flex items-center gap-2 px-3 py-1 rounded-lg ${security.color} text-black font-black text-[10px] tracking-widest shadow-lg`}>
+                        <SecurityIcon className="w-3 h-3" />
+                        {security.label}
+                      </div>
+                    );
+                  })()}
+                  <div className="h-4 w-px bg-white/20" />
+                  <span className="text-white/40 font-mono text-[10px] tracking-widest uppercase">Behavioral Status: {scores.legitimacy >= 60 ? 'STABLE' : 'UNSTABLE'}</span>
+                </div>
+              </div>
               <div className="flex items-center gap-4">
                 <span className="text-2xl text-primary font-black uppercase tracking-wide bg-primary/10 px-4 py-1 rounded-xl border border-primary/20">{persona}</span>
                 <div className="flex items-center gap-2 bg-white/10 px-4 py-1 rounded-xl border border-white/10">
@@ -159,14 +185,14 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
             </div>
           </div>
 
-          <div className="grid grid-cols-12 gap-10 flex-1">
+          <div className="grid grid-cols-12 gap-8 flex-1">
             {/* Left Column: Analysis & Radar */}
-            <div className="col-span-12 lg:col-span-7 space-y-10">
+            <div className="col-span-12 lg:col-span-7 space-y-6">
               {/* Radar Chart & Core Score */}
-              <div className="bg-gradient-to-br from-white/10 to-transparent border border-white/20 p-10 rounded-[2.5rem] backdrop-blur-xl relative overflow-hidden group">
+              <div className="bg-gradient-to-br from-white/10 to-transparent border border-white/20 p-8 rounded-[2.5rem] backdrop-blur-xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-primary/10 transition-colors" />
                 <div className="flex items-center justify-between relative z-10">
-                  <div className="space-y-8">
+                  <div className="space-y-6">
                     <div>
                       <p className="text-primary text-xs font-black uppercase tracking-[0.3em] mb-2">Aggregate Efficiency</p>
                       <div className="flex items-baseline gap-2">
@@ -218,13 +244,13 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
               </div>
 
               {/* Advanced Solved Grid */}
-              <div className="grid grid-cols-3 gap-8">
+              <div className="grid grid-cols-3 gap-6">
                 {[
                   { label: 'Basic', value: stats.easySolved, color: 'text-emerald-400', sub: 'Foundations' },
                   { label: 'Adv.', value: stats.mediumSolved, color: 'text-amber-400', sub: 'Algorithmics' },
                   { label: 'Expert', value: stats.hardSolved, color: 'text-red-500', sub: 'Complexity' },
                 ].map((s) => (
-                  <div key={s.label} className="bg-white/5 border border-white/10 p-8 rounded-[2rem] backdrop-blur-md text-center group hover:bg-white/10 transition-all">
+                  <div key={s.label} className="bg-white/5 border border-white/10 p-6 rounded-[2rem] backdrop-blur-md text-center group hover:bg-white/10 transition-all">
                     <p className={`text-5xl font-black ${s.color} mb-1 drop-shadow-md`}>{s.value}</p>
                     <p className="text-xs text-white/40 font-black uppercase tracking-[0.2em]">{s.label}</p>
                     <p className="text-[10px] text-white/20 font-bold uppercase mt-1">{s.sub}</p>
@@ -233,11 +259,11 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
               </div>
 
               {/* Language Stack */}
-              <div className="bg-white/5 border border-white/10 p-10 rounded-[2.5rem] backdrop-blur-md">
-                <h3 className="text-white font-black text-sm mb-8 flex items-center gap-3 tracking-[0.3em] uppercase">
+              <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] backdrop-blur-md">
+                <h3 className="text-white font-black text-sm mb-6 flex items-center gap-3 tracking-[0.3em] uppercase">
                   <Zap className="w-5 h-5 text-primary" /> Technical Stack Dominance
                 </h3>
-                <div className="grid grid-cols-2 gap-10">
+                <div className="grid grid-cols-2 gap-8">
                   {(stats.languages || []).slice(0, 4).map((l, i) => {
                     const percentage = (l.value / stats.totalSolved) * 100;
                     return (
@@ -259,38 +285,68 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
               </div>
             </div>
 
-            {/* Right Column: AI Insights & Legitimacy */}
-            <div className="col-span-12 lg:col-span-5 space-y-10">
-              {/* AI Core Evaluation */}
-              <div className="bg-primary p-12 rounded-[3rem] text-black shadow-[0_40px_80px_-20px_rgba(249,115,22,0.4)] relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:scale-110 transition-transform duration-700">
-                  <Brain className="w-48 h-48" />
+            {/* Right Column: Neural Intelligence & Authenticity */}
+            <div className="col-span-12 lg:col-span-5 space-y-6">
+              {/* Redesigned AI Core Evaluation */}
+              <div className="bg-gradient-to-br from-primary via-primary/90 to-accent p-10 rounded-[3rem] text-black shadow-[0_40px_80px_-20px_rgba(249,115,22,0.4)] relative overflow-hidden flex flex-col">
+                <div className="absolute top-0 right-0 p-8 opacity-10">
+                  <Brain className="w-56 h-56" />
                 </div>
-                <div className="relative z-10 flex flex-col h-full">
-                  <div className="flex items-center gap-3 bg-black/10 w-fit px-4 py-1 rounded-full border border-black/5 mb-8">
-                    <Brain className="w-5 h-5" />
-                    <span className="font-black uppercase tracking-[0.2em] text-[10px]">Neural Protocol {protocolVersion}</span>
-                  </div>
-                  <p className="text-2xl font-black italic leading-tight mb-8">
-                    "{aiAnalysis?.summary || "Neural engine is synthesizing behavioral patterns and algorithmic trajectories for high-fidelity profile validation..."}"
-                  </p>
-                  <div className="mt-auto space-y-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-black/40">Competency Strengths</p>
-                    <div className="flex flex-wrap gap-2 text-xs font-black uppercase">
-                      {(aiAnalysis?.strengths || ["Analytical Depth", "Constraint Mastery"]).slice(0, 3).map(s => (
-                        <span key={s} className="bg-black text-primary px-4 py-2 rounded-xl shadow-lg border border-white/10">{s}</span>
-                      ))}
+
+                <div className="relative z-10 flex flex-col h-full flex-1">
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="flex items-center gap-2 bg-black/10 px-3 py-1 rounded-full border border-black/5">
+                      <Code2 className="w-4 h-4" />
+                      <span className="font-black uppercase tracking-[0.2em] text-[9px]">ENGINE CORE {protocolVersion}</span>
                     </div>
+                    <div className="flex items-center gap-2 px-3 py-1 bg-black/5 rounded-lg border border-black/5">
+                      <Zap className="w-3 h-3 fill-black" />
+                      <span className="font-black text-[9px] tracking-widest uppercase">{scores.overall > 70 ? 'Optimal' : 'Standard'}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 flex-1">
+                    <div className="space-y-1">
+                      <p className="font-black uppercase tracking-widest text-[10px] text-black/40">Cognitive Synthesis</p>
+                      <p className="text-2xl font-black italic underline decoration-2 underline-offset-8 decoration-black/20 leading-tight">
+                        "{aiAnalysis?.summary || "Analyzing pattern recognition and complexity trajectories to synthesize behavioral insights..."}"
+                      </p>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-black/40">Persona Attributes</p>
+                        <div className="flex flex-wrap gap-2">
+                          {aiAnalysis?.strengths ? aiAnalysis.strengths.slice(0, 3).map(s => (
+                            <span key={s} className="bg-black text-primary px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg border border-white/10">{s}</span>
+                          )) : (
+                            <>
+                              <span className="bg-black/80 text-primary px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg border border-white/5">Analytical Depth</span>
+                              <span className="bg-black/80 text-primary px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg border border-white/5">Syntax Master</span>
+                              <span className="bg-black/80 text-primary px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg border border-white/5">Logic Flow</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 pt-6 border-t border-black/10 flex justify-between items-end">
+                    <div className="space-y-1">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-black/40">Verification Rank</p>
+                      <p className="font-black text-xl italic">{persona}</p>
+                    </div>
+                    <Star className="w-8 h-8 opacity-20" />
                   </div>
                 </div>
               </div>
 
               {/* Legitimacy Confidence */}
-              <div className="bg-white/10 border-2 border-emerald-500/30 p-10 rounded-[2.5rem] backdrop-blur-3xl shadow-xl">
-                <h3 className="text-emerald-400 font-black text-sm mb-8 flex items-center gap-3 tracking-[0.3em] uppercase">
+              <div className="bg-white/10 border-2 border-emerald-500/30 p-8 rounded-[2.5rem] backdrop-blur-3xl shadow-xl">
+                <h3 className="text-emerald-400 font-black text-sm mb-6 flex items-center gap-3 tracking-[0.3em] uppercase">
                   <ShieldCheck className="w-6 h-6" /> Authenticity Engine
                 </h3>
-                <div className="space-y-8">
+                <div className="space-y-6">
                   <div className="p-6 bg-black/20 rounded-2xl border border-white/10">
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-xs text-white/50 font-black uppercase tracking-widest">Confidence Index</span>
@@ -334,9 +390,9 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
           </div>
 
           {/* Footer Card */}
-          <div className="mt-16 pt-12 border-t border-white/10 flex justify-between items-end">
+          <div className="mt-6 pt-6 border-t border-white/10 flex justify-between items-end">
             <div className="space-y-2">
-              <p className="text-white/30 text-[10px] font-black uppercase tracking-[0.4em]">Protocol Node Analysis</p>
+              <p className="text-white/30 text-[10px] font-black uppercase tracking-[0.4em]">AI BEHAVIORAL ANALYSIS</p>
               <p className="text-white font-black tracking-[0.2em] text-2xl">LEETCODE<span className="text-primary italic">INSIGHT</span> AI</p>
             </div>
             <div className="flex items-center gap-10">

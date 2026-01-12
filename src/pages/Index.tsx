@@ -11,11 +11,13 @@ import { SubmissionHeatmap } from '@/components/SubmissionHeatmap';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { ShareableCard } from '@/components/ShareableCard';
 import { AIAnalysisCard } from '@/components/AIAnalysisCard';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
 import { useLeetCodeProfile } from '@/hooks/useLeetCodeProfile';
 import { useLeetCodeAI } from '@/hooks/useLeetCodeAI';
 import { analyzeProfile } from '@/lib/analyzeLeetCode';
 import { Button } from '@/components/ui/button';
-import { Download, Loader2, Sparkles } from 'lucide-react';
+import { Download, Loader2 } from 'lucide-react';
 
 const Index = () => {
   const { profile, isLoading, fetchProfile } = useLeetCodeProfile();
@@ -56,9 +58,10 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Main Content */}
-      <main className="container max-w-6xl mx-auto px-4">
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
+
+      <main className="container max-w-6xl mx-auto px-4 pt-12 flex-1">
         <HeroSection onAnalyze={fetchProfile} isLoading={isLoading} />
 
         <AnimatePresence mode="wait">
@@ -79,7 +82,7 @@ const Index = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="space-y-6 pb-20"
+              className="space-y-12 pb-20"
             >
               {/* Profile Header */}
               <ProfileHeader
@@ -97,7 +100,7 @@ const Index = () => {
                   disabled={isExporting}
                   variant="gradient"
                   size="lg"
-                  className="gap-2"
+                  className="gap-2 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] transition-all"
                 >
                   {isExporting ? (
                     <>
@@ -114,7 +117,7 @@ const Index = () => {
               </div>
 
               {/* Score Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <ScoreCard
                   score={analysis.scores.overall}
                   label="Overall Score"
@@ -163,7 +166,7 @@ const Index = () => {
               </AnimatePresence>
 
               {/* Charts Row */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <LanguageChart languages={analysis.profile.languages} />
                 <LegitimacyIndicators
                   indicators={analysis.indicators}
@@ -207,14 +210,7 @@ const Index = () => {
         </div>
       )}
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 py-8 mt-auto">
-        <div className="container max-w-6xl mx-auto px-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            LeetCode Profile Analyzer • Built with React & Tailwind CSS
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

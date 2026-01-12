@@ -31,12 +31,20 @@ interface ShareableCardProps {
 }
 
 const getPersona = (scores: { consistency: number; diversity: number; legitimacy: number; overall: number }) => {
-  if (scores.legitimacy < 60) return "The Enigmatic Coder";
+  if (scores.legitimacy < 45) return "The Initial Observer";
   if (scores.overall > 90) return "The Grandmaster";
-  if (scores.consistency > 85) return "The Unstoppable Climber";
-  if (scores.diversity > 85) return "The Polyglot Architect";
-  if (scores.overall > 70) return "Elite Problem Solver";
+  if (scores.overall > 80) return "The Elite Architect";
+  if (scores.overall > 65) return "Expert Problem Solver";
+  if (scores.overall > 40) return "Advanced Challenger";
   return "Rising Challenger";
+};
+
+const getRoleBadge = (overall: number) => {
+  if (overall > 90) return "GRADMASTER";
+  if (overall > 80) return "ELITE";
+  if (overall > 65) return "EXPERT";
+  if (overall > 40) return "ADVANCED";
+  return "CHALLENGER";
 };
 
 export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
@@ -118,7 +126,7 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
                 className="w-40 h-40 rounded-[2.5rem] border-4 border-white/20 object-cover relative z-10 shadow-2xl"
               />
               <div className="absolute -bottom-4 -right-4 bg-primary text-black font-black px-6 py-2 rounded-2xl text-sm skew-x-[-8deg] shadow-xl z-20 border-2 border-black/10">
-                MASTER
+                {getRoleBadge(scores.overall)}
               </div>
             </div>
             <div className="space-y-2">
@@ -248,7 +256,7 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
                     <span className="font-black uppercase tracking-[0.2em] text-[10px]">Neural Protocol v2.4</span>
                   </div>
                   <p className="text-2xl font-black italic leading-tight mb-8">
-                    "{aiAnalysis?.summary || "System analyzing algorithmic trajectories and behavioral patterns for high-tier profile validation."}"
+                    "{aiAnalysis?.summary || "Neural engine is synthesizing behavioral patterns and algorithmic trajectories for high-fidelity profile validation..."}"
                   </p>
                   <div className="mt-auto space-y-4">
                     <p className="text-[10px] font-black uppercase tracking-widest text-black/40">Competency Strengths</p>

@@ -4,6 +4,9 @@ import { LeetCodeProfile, LegitimacyIndicator, AnalysisResult } from '@/types/le
 const calculateConsistencyScore = (profile: LeetCodeProfile): number => {
   const { streak, activeDays, totalSolved } = profile;
 
+  // Handle very low activity profiles
+  if (totalSolved < 5 || activeDays < 2) return 5;
+
   // Streak contribution (max 30 points)
   const streakScore = Math.min(streak / 30 * 30, 30);
 
@@ -13,7 +16,7 @@ const calculateConsistencyScore = (profile: LeetCodeProfile): number => {
   // Problems per active day ratio (max 30 points)
   const problemsPerDay = activeDays > 0 ? totalSolved / activeDays : 0;
   const ratioScore = problemsPerDay > 0.5 && problemsPerDay < 5 ? 30 :
-    problemsPerDay >= 5 ? 15 : problemsPerDay * 60;
+    problemsPerDay >= 5 ? 10 : problemsPerDay * 60;
 
   return Math.round(streakScore + activeDaysScore + ratioScore);
 };
@@ -128,7 +131,7 @@ const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicator
     ? (profile.languages[0].value / totalSolved) * 100
     : 0;
 
-  if (topLanguagePercentage > 95 && profile.languages.length === 1) {
+  if (topLanguagePercentage > 95 && profile.languages.length === 1 && totalSolved > 10) {
     indicators.push({
       label: 'Single Language Focus',
       status: 'warning',
@@ -140,6 +143,16 @@ const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicator
       label: 'Multi-language Proficiency',
       status: 'good',
       description: `Uses ${profile.languages.length} programming languages, showing versatility.`,
+    });
+  }
+
+  // Check 6: Dummy/Initial Profile Check
+  if (totalSolved < 20 || activeDays < 5) {
+    score = Math.min(score, 40);
+    indicators.push({
+      label: 'Stage: INITIAL',
+      status: 'warning',
+      description: 'Profile is in early stages. Statistics may not reflect long-term behavioral patterns.',
     });
   }
 

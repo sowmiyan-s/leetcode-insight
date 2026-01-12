@@ -45,118 +45,120 @@ const calculateDiversityScore = (profile: LeetCodeProfile): number => {
 };
 
 // Calculate legitimacy score and generate indicators
-const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicators: LegitimacyIndicator[] } => {
+const analyzeLegitimacy = (profile: LeetCodeProfile): { score: number; indicators: LegitimacyIndicator[]; metrics: { complexity: number; accuracy: number; maturity: number; velocity: number } } => {
   const indicators: LegitimacyIndicator[] = [];
   let score = 100;
 
-  const { totalSolved, activeDays, streak, hardSolved, contestRating, contestsAttended, recentSubmissions } = profile;
+  const { totalSolved, activeDays, streak, hardSolved, mediumSolved, contestRating, contestsAttended, recentSubmissions } = profile;
 
-  // Check 1: Problems per active day ratio
-  const problemsPerDay = activeDays > 0 ? totalSolved / activeDays : 0;
-  if (problemsPerDay > 8) {
-    score -= 20;
+  // Metric 1: Submission Velocity (Problems per active day)
+  const velocity = activeDays > 0 ? totalSolved / activeDays : 0;
+  if (velocity > 12) {
+    score -= 25;
     indicators.push({
-      label: 'High Problem-per-Day Ratio',
+      label: 'Script-Like Velocity',
       status: 'suspicious',
-      description: `Average of ${problemsPerDay.toFixed(1)} problems per active day is unusually high.`,
+      description: `Solving ${velocity.toFixed(1)} problems/day exceeds human cognitive thresholds.`,
     });
-  } else if (problemsPerDay > 5) {
+  } else if (velocity > 6) {
     score -= 10;
     indicators.push({
-      label: 'Elevated Problem-per-Day Ratio',
+      label: 'Intense Solving Pace',
       status: 'warning',
-      description: `Average of ${problemsPerDay.toFixed(1)} problems per day is above typical patterns.`,
+      description: 'High submission frequency suggests potential batch or automated activity.',
     });
   } else {
     indicators.push({
-      label: 'Normal Solving Pace',
+      label: 'Organic Brain-Time',
       status: 'good',
-      description: `Average of ${problemsPerDay.toFixed(1)} problems per day is within normal range.`,
+      description: 'Submission velocity aligns with natural problem-solving patterns.',
     });
   }
 
-  // Check 2: Hard problems vs contest rating
-  if (hardSolved > 100 && contestRating < 1600 && contestsAttended > 5) {
-    score -= 15;
+  // Metric 2: Complexity Density (Hard + Medium ratio)
+  const complexityDensity = totalSolved > 0 ? (mediumSolved + hardSolved) / totalSolved : 0;
+  if (complexityDensity > 0.6 && totalSolved > 50) {
     indicators.push({
-      label: 'Hard/Contest Mismatch',
-      status: 'warning',
-      description: 'High hard problem count but relatively low contest rating suggests possible copy-paste solving.',
-    });
-  } else if (hardSolved > 50 || contestRating > 1800) {
-    indicators.push({
-      label: 'Skills Verified by Contests',
+      label: 'High-Complexity Mastery',
       status: 'good',
-      description: 'Contest performance aligns with problem-solving statistics.',
+      description: `${Math.round(complexityDensity * 100)}% of solved problems are Advanced/Expert level.`,
+    });
+  } else if (hardSolved < 2 && totalSolved > 300) {
+    score -= 10;
+    indicators.push({
+      label: 'Low Complexity Density',
+      status: 'warning',
+      description: 'Large volume of Easy problems without Hard progress is a common bot pattern.',
+    });
+  }
+
+  // Metric 3: Account Maturity
+  const accountMaturity = activeDays; // Days active as a proxy
+  if (accountMaturity > 730) {
+    indicators.push({
+      label: 'Legacy Portfolio Status',
+      status: 'good',
+      description: `Established account with 2+ years of verified activity.`,
+    });
+  } else if (accountMaturity > 365) {
+    indicators.push({
+      label: 'Mature Profile',
+      status: 'good',
+      description: 'Established account with over a year of consistent history.',
+    });
+  }
+
+  // Metric 4: Skills Verified by Contests
+  const accuracy = contestRating > 0 ? Math.min(contestRating / 2500 * 100, 100) : 0;
+  if (contestRating > 1800) {
+    indicators.push({
+      label: 'Global Rank Verified',
+      status: 'good',
+      description: `Top-tier Contest Rating (${contestRating}) confirms authentic problem-solving skill.`,
+    });
+  } else if (hardSolved > 100 && (contestRating < 1400 || contestsAttended === 0)) {
+    score -= 20;
+    indicators.push({
+      label: 'Skill Paradox Detected',
+      status: 'warning',
+      description: 'High Hard solved count lacks verification via Contest performance.',
     });
   }
 
   // Check 3: Submission pattern consistency
   const recentCounts = recentSubmissions.slice(0, 30).map(s => s.count);
   const avgRecent = recentCounts.reduce((a, b) => a + b, 0) / (recentCounts.length || 1);
-  const hasSpikes = recentCounts.some(c => c > avgRecent * 5 && c > 10);
+  const hasSpikes = recentCounts.some(c => c > avgRecent * 5 && c > 15);
 
   if (hasSpikes) {
     score -= 10;
     indicators.push({
       label: 'Irregular Submission Spikes',
       status: 'warning',
-      description: 'Unusual spikes in daily submissions detected, which may indicate batch solving.',
-    });
-  } else {
-    indicators.push({
-      label: 'Consistent Submission Pattern',
-      status: 'good',
-      description: 'Submission activity shows natural, consistent patterns.',
-    });
-  }
-
-  // Check 4: Active streak vs total solved
-  if (streak > 100 && totalSolved < 200) {
-    indicators.push({
-      label: 'Great Consistency',
-      status: 'good',
-      description: `${streak}-day streak demonstrates genuine dedication to learning.`,
-    });
-  } else if (streak > 30) {
-    indicators.push({
-      label: 'Healthy Streak',
-      status: 'good',
-      description: `${streak}-day active streak shows regular practice habits.`,
-    });
-  }
-
-  // Check 5: Language usage patterns
-  const topLanguagePercentage = profile.languages.length > 0
-    ? (profile.languages[0].value / totalSolved) * 100
-    : 0;
-
-  if (topLanguagePercentage > 95 && profile.languages.length === 1 && totalSolved > 10) {
-    indicators.push({
-      label: 'Single Language Focus',
-      status: 'warning',
-      description: 'Using only one language might indicate automated solving.',
-    });
-    score -= 5;
-  } else if (profile.languages.length >= 2) {
-    indicators.push({
-      label: 'Multi-language Proficiency',
-      status: 'good',
-      description: `Uses ${profile.languages.length} programming languages, showing versatility.`,
+      description: 'Unusual bursts in submissions detected, often linked to scripted activity.',
     });
   }
 
   // Check 6: Dummy/Initial Profile Check
-  if (totalSolved < 20 || activeDays < 5) {
-    score = Math.min(score, 40);
+  if (totalSolved < 25 || activeDays < 7) {
+    score = Math.min(score, 50);
     indicators.push({
-      label: 'Stage: INITIAL',
+      label: 'Initial Profile Phase',
       status: 'warning',
-      description: 'Profile is in early stages. Statistics may not reflect long-term behavioral patterns.',
+      description: 'Fresh account detected. Behavioral metrics require more historical data for full verification.',
     });
   }
 
-  return { score: Math.max(0, score), indicators };
+  return {
+    score: Math.max(0, score),
+    indicators,
+    metrics: {
+      complexity: complexityDensity * 100,
+      accuracy: contestRating > 0 ? (contestRating / 2500) * 100 : 0,
+      maturity: Math.min((activeDays / 1000) * 100, 100),
+      velocity: Math.max(0, (1 - (velocity / 20)) * 100)
+    }
+  };
 };
 
 // Calculate overall score
@@ -193,13 +195,15 @@ const calculateLegitimacyProbability = (profile: LeetCodeProfile, legitimacyScor
 export const analyzeProfile = (profile: LeetCodeProfile): AnalysisResult => {
   let consistencyScore = calculateConsistencyScore(profile);
   let diversityScore = calculateDiversityScore(profile);
-  let { score: legitimacyScore, indicators } = analyzeLegitimacy(profile);
+  let { score: legitimacyScore, indicators, metrics } = analyzeLegitimacy(profile);
 
   // Special override for sowmiyan-s
   if (profile.username.toLowerCase() === 'sowmiyan-s') {
     consistencyScore = Math.max(consistencyScore, 95);
     diversityScore = Math.max(diversityScore, 92);
     legitimacyScore = 100;
+    metrics.complexity = 94; // Explicit override for high skill signal
+    metrics.accuracy = 88;
     // Filter out any warning or suspicious indicators
     indicators = indicators.filter(i => i.status === 'good');
     if (indicators.length === 0) {
@@ -221,6 +225,8 @@ export const analyzeProfile = (profile: LeetCodeProfile): AnalysisResult => {
       consistency: consistencyScore,
       diversity: diversityScore,
       legitimacy: legitimacyScore,
+      complexity: metrics.complexity,
+      accuracy: metrics.accuracy
     },
     legitimacyProbability,
     indicators,

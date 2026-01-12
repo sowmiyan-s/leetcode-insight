@@ -35,6 +35,8 @@ export interface AnalysisResult {
     consistency: number;
     diversity: number;
     legitimacy: number;
+    complexity: number;
+    accuracy: number;
   };
   legitimacyProbability: number;
   indicators: LegitimacyIndicator[];

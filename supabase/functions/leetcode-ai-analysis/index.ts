@@ -23,9 +23,35 @@ serve(async (req: Request) => {
         }
 
         const prompt = `
-      Analyze this LeetCode profile and provide a professional evaluation.
+      Analyze this LeetCode profile deeply. I need a "Cognitive Synthesis" - a 2-sentence executive summary that sounds like a distinct technical personality assessment.
+
+      User Data:
+      - Handle: ${profile.username}
+      - Problems: ${profile.totalSolved} (E:${profile.easySolved}, M:${profile.mediumSolved}, H:${profile.hardSolved})
+      - Rank: ${profile.ranking}, Contest Rating: ${profile.contestRating}
+      - Activity: ${profile.streak} day streak, ${profile.activeDays} active days.
+      - Languages: ${profile.languages.map((l: any) => l.name).join(', ')}
       
-      User: ${profile.username}
+      Scores:
+      - Consistency: ${scores.consistency}%
+      - Complexity: ${scores.complexity || 0}%
+      - Diversity: ${scores.diversity}%
+      
+      Instructions:
+      1. IGNORE generic praise. Be specific.
+      2. If "Hard" count is high, mention "Advanced Algorithmic Mastery".
+      3. If "Consistency" is high, mention "Disciplined Engineering Habit".
+      4. "cognitive_synthesis" MUST be < 30 words. Punchy, executive tone.
+      5. "roadmap" MUST be 4 actionable steps based on their *specific* weak spots (e.g. "Focus on Graph DP").
+      6. "careerOutlook" MUST predict their suitable roles (e.g. "Backend Systems Engineer at FAANG").
+
+      Please provide the analysis in JSON format with the following fields:
+      1. "cognitive_synthesis": The 30-word executive summary for the share card.
+      2. "summary": A detailed professional summary for the website dashboard.
+      3. "strengths": A list of 3 key strengths.
+      4. "weaknesses": A list of 2-3 areas for improvement.
+      5. "roadmap": A list of 4 specific topics or actions they should take next.
+      6. "careerOutlook": A strategic statement about their career potential.
       Stats:
       - Total Solved: ${profile.totalSolved} (Easy: ${profile.easySolved}, Medium: ${profile.mediumSolved}, Hard: ${profile.hardSolved})
       - Ranking: ${profile.ranking}

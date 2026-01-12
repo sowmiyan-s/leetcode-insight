@@ -1,12 +1,10 @@
 import { motion } from 'framer-motion';
-import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Shield, Lock, Share2, Database } from 'lucide-react';
 
 const PrivacyPolicy = () => {
     return (
         <div className="min-h-screen bg-background flex flex-col">
-            <Header />
             <main className="container max-w-4xl mx-auto px-4 py-20 flex-1">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

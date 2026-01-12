@@ -18,6 +18,7 @@ export const useLeetCodeAI = () => {
     const generateAnalysis = async (data: AnalysisResult) => {
         setIsLoading(true);
         setError(null);
+        setAnalysis(null);
         try {
             const { data: aiData, error: fnError } = await supabase.functions.invoke('leetcode-ai-analysis', {
                 body: {

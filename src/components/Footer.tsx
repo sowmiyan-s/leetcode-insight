@@ -19,20 +19,6 @@ export const Footer = () => {
                         </p>
                     </div>
                     <div>
-                        <h4 className="text-sm font-semibold mb-4">Platform</h4>
-                        <ul className="space-y-2 text-sm text-muted-foreground">
-                            <li>
-                                <Link to="/" className="hover:text-primary transition-colors">Analyzer</Link>
-                            </li>
-                            <li>
-                                <a href="#" className="hover:text-primary transition-colors">Roadmap</a>
-                            </li>
-                            <li>
-                                <a href="#" className="hover:text-primary transition-colors">Skill Graph</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
                         <h4 className="text-sm font-semibold mb-4">Resources</h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li>
@@ -48,24 +34,7 @@ export const Footer = () => {
                             <li>
                                 <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
                             </li>
-                            <li>
-                                <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
-                            </li>
                         </ul>
-                    </div>
-                    <div>
-                        <h4 className="text-sm font-semibold mb-4">Connect</h4>
-                        <div className="flex gap-4">
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Github className="h-5 w-5" />
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Twitter className="h-5 w-5" />
-                            </a>
-                            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                                <Linkedin className="h-5 w-5" />
-                            </a>
-                        </div>
                     </div>
                 </div>
                 <div className="border-t border-border/40 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">

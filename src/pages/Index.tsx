@@ -11,7 +11,6 @@ import { SubmissionHeatmap } from '@/components/SubmissionHeatmap';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { ShareableCard } from '@/components/ShareableCard';
 import { AIAnalysisCard } from '@/components/AIAnalysisCard';
-import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { useLeetCodeProfile } from '@/hooks/useLeetCodeProfile';
 import { useLeetCodeAI } from '@/hooks/useLeetCodeAI';
@@ -31,7 +30,7 @@ const Index = () => {
   }, [profile]);
 
   useEffect(() => {
-    if (analysis && !aiAnalysis && !isAiLoading) {
+    if (analysis && !isAiLoading) {
       generateAnalysis(analysis);
     }
   }, [analysis]);
@@ -59,8 +58,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
-
       <main className="container max-w-6xl mx-auto px-4 pt-12 flex-1">
         <HeroSection onAnalyze={fetchProfile} isLoading={isLoading} />
 

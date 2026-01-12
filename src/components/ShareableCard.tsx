@@ -51,6 +51,22 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
   ({ username, avatar, scores, legitimacyProbability, stats, aiAnalysis, indicators }, ref) => {
     const persona = getPersona(scores);
 
+    // Deterministic Cryptographic ID based on username
+    const getCryptoId = (name: string) => {
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) {
+        hash = ((hash << 5) - hash) + name.charCodeAt(i);
+        hash |= 0;
+      }
+      const absHash = Math.abs(hash).toString(36).toUpperCase();
+      return `NFI${absHash.substring(0, 5)}X${name.length}`;
+    };
+
+    const cryptoId = getCryptoId(username);
+
+    // Dynamic Protocol Version based on scores
+    const protocolVersion = `V${2 + Math.floor(scores.overall / 50)}.${Math.floor((scores.overall % 50) / 5)}`;
+
     // SVG Radar Logic
     const size = 200;
     const center = size / 2;
@@ -112,7 +128,7 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
             <div className="flex flex-col items-end">
               <Fingerprint className="w-12 h-12 text-white/20 mb-2" />
               <p className="text-[hsl(220,9%,55%)] font-mono text-[10px] uppercase tracking-[0.3em]">Cryptographic ID</p>
-              <p className="text-white font-mono font-bold text-lg">#{Math.random().toString(36).substring(2, 10).toUpperCase()}</p>
+              <p className="text-white font-mono font-bold text-lg">#{cryptoId}</p>
             </div>
           </div>
 
@@ -253,7 +269,7 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
                 <div className="relative z-10 flex flex-col h-full">
                   <div className="flex items-center gap-3 bg-black/10 w-fit px-4 py-1 rounded-full border border-black/5 mb-8">
                     <Brain className="w-5 h-5" />
-                    <span className="font-black uppercase tracking-[0.2em] text-[10px]">Neural Protocol v2.4</span>
+                    <span className="font-black uppercase tracking-[0.2em] text-[10px]">Neural Protocol {protocolVersion}</span>
                   </div>
                   <p className="text-2xl font-black italic leading-tight mb-8">
                     "{aiAnalysis?.summary || "Neural engine is synthesizing behavioral patterns and algorithmic trajectories for high-fidelity profile validation..."}"

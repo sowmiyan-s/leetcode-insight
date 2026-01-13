@@ -60,7 +60,7 @@ serve(async (req) => {
       }
     `;
 
-    // Query for contest rating
+    // Query for contest rating and history
     const contestQuery = `
       query userContestRankingInfo($username: String!) {
         userContestRanking(username: $username) {
@@ -68,6 +68,15 @@ serve(async (req) => {
           rating
           globalRanking
           topPercentage
+        }
+        userContestRankingHistory(username: $username) {
+          attended
+          rating
+          ranking
+          contest {
+            title
+            startTime
+          }
         }
       }
     `;
@@ -117,6 +126,30 @@ serve(async (req) => {
 
     const contestData = await contestResponse.json();
     const contestInfo = contestData.data?.userContestRanking || {};
+    const contestHistoryData = contestData.data?.userContestRankingHistory || [];
+
+    // Parse contest history
+    interface ContestHistoryItem {
+      attended: boolean;
+      rating: number;
+      ranking: number;
+      contest: {
+        title: string;
+        startTime: number;
+      };
+    }
+
+    const contestHistory = (contestHistoryData as ContestHistoryItem[])
+      .filter((c) => c.attended)
+      .map((c) => ({
+        contestTitle: c.contest?.title || 'Unknown Contest',
+        rating: c.rating || 0,
+        ranking: c.ranking || 0,
+        date: c.contest?.startTime 
+          ? new Date(c.contest.startTime * 1000).toISOString().split('T')[0]
+          : '',
+      }))
+      .slice(-30); // Last 30 contests
 
     // Parse submission calendar
     const calendar = user.userCalendar?.submissionCalendar
@@ -183,6 +216,7 @@ serve(async (req) => {
       languages,
       recentSubmissions,
       badges: [],
+      contestHistory,
     };
 
     console.log(`Successfully fetched profile for: ${username}`);

@@ -110,20 +110,30 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
     return (
       <div
         ref={ref}
-        className="w-[1080px] h-[1350px] bg-[hsl(220,30%,2%)] p-0 flex flex-col relative overflow-hidden text-white"
-        style={{ fontFamily: 'Inter, sans-serif' }}
+        className="w-[1080px] h-[1350px] p-0 flex flex-col relative overflow-hidden text-white"
+        style={{ 
+          fontFamily: 'Inter, sans-serif',
+          background: 'linear-gradient(160deg, hsl(220,35%,6%) 0%, hsl(220,30%,2%) 40%, hsl(220,25%,4%) 100%)'
+        }}
       >
-        {/* Dynamic Background */}
+        {/* Dynamic Background with enhanced effects */}
         {avatar && (
           <div className="absolute inset-0 z-0">
-            <img src={avatar} alt="" className="w-full h-full object-cover scale-110 blur-[60px] opacity-20 brightness-50" />
+            <img src={avatar} alt="" className="w-full h-full object-cover scale-125 blur-[80px] opacity-25 brightness-50 saturate-150" />
             <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220,30%,2%)] via-transparent to-[hsl(220,30%,2%)]" />
-            <div className={`absolute inset-0 bg-gradient-to-b from-${security.color}/20 via-transparent to-transparent opacity-40`} />
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-accent/10 opacity-60" />
           </div>
         )}
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-[0.05] z-0" />
-        <div className={`absolute top-0 right-0 w-[1000px] h-[1000px] bg-${security.color}/10 rounded-full blur-[200px] -translate-y-1/2 translate-x-1/2`} />
-        <div className={`h-4 bg-gradient-to-r from-${security.color} via-accent to-primary relative z-10`} />
+        
+        {/* Noise texture overlay */}
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-[0.03] z-0" />
+        
+        {/* Glowing orbs */}
+        <div className="absolute top-[-200px] right-[-200px] w-[600px] h-[600px] bg-primary/20 rounded-full blur-[150px] z-0" />
+        <div className="absolute bottom-[-200px] left-[-200px] w-[500px] h-[500px] bg-accent/15 rounded-full blur-[120px] z-0" />
+        
+        {/* Top accent bar with gradient */}
+        <div className="h-2 bg-gradient-to-r from-primary via-accent to-primary relative z-10 shadow-lg shadow-primary/30" />
 
         <div className="px-12 py-8 flex-1 flex flex-col relative z-20">
           {/* Top Header */}
@@ -146,16 +156,19 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
             </div>
           </div>
 
-          {/* Hero Section */}
-          <div className="flex items-center gap-8 mb-6 bg-white/5 border border-white/10 p-6 rounded-[2.5rem] backdrop-blur-2xl shadow-2xl relative">
+          {/* Hero Section with glass morphism */}
+          <div className="flex items-center gap-8 mb-6 bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/10 p-6 rounded-[2.5rem] backdrop-blur-2xl shadow-2xl relative overflow-hidden">
+            {/* Inner glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-[2.5rem]" />
+            
             <div className="relative shrink-0">
-              <div className="absolute inset-0 bg-primary/30 rounded-full blur-xl" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/40 to-accent/40 rounded-full blur-2xl scale-125" />
               <img
                 src={avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${username}`}
                 alt={username}
-                className="w-32 h-32 rounded-[2rem] border-4 border-white/20 object-cover relative z-10 shadow-2xl"
+                className="w-32 h-32 rounded-[2rem] border-4 border-white/30 object-cover relative z-10 shadow-2xl ring-4 ring-primary/20"
               />
-              <div className="absolute -bottom-3 -right-3 bg-primary text-black font-black px-4 py-1.5 rounded-xl text-[10px] skew-x-[-8deg] shadow-xl z-20 border-2 border-black/10">
+              <div className="absolute -bottom-3 -right-3 bg-gradient-to-r from-primary to-accent text-black font-black px-4 py-1.5 rounded-xl text-[10px] skew-x-[-8deg] shadow-xl z-20 border-2 border-black/10">
                 {getRoleBadge(scores.overall)}
               </div>
             </div>
@@ -205,8 +218,10 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
           <div className="grid grid-cols-12 gap-6 flex-1 overflow-hidden">
             {/* Main Column */}
             <div className="col-span-12 lg:col-span-7 space-y-4 flex flex-col h-full">
-              {/* Radar & Detail */}
-              <div className="bg-gradient-to-br from-white/10 to-transparent border border-white/10 p-6 rounded-[2rem] backdrop-blur-xl relative overflow-hidden flex-1 shrink-0">
+              {/* Radar & Detail with enhanced styling */}
+              <div className="bg-gradient-to-br from-white/10 via-white/5 to-transparent border border-white/15 p-6 rounded-[2rem] backdrop-blur-xl relative overflow-hidden flex-1 shrink-0 shadow-xl">
+                {/* Inner glow */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 rounded-full blur-[60px]" />
                 <div className="flex items-center justify-between h-full relative z-10">
                   <div className="space-y-6">
                     <div>
@@ -285,7 +300,9 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
 
             {/* AI and Security Column */}
             <div className="col-span-12 lg:col-span-5 space-y-4 flex flex-col h-full">
-              <div className="bg-gradient-to-br from-primary via-primary/90 to-accent p-6 rounded-[2.5rem] text-white h-1/2 flex flex-col shadow-xl">
+              <div className="bg-gradient-to-br from-primary via-primary/90 to-accent p-6 rounded-[2.5rem] text-white h-1/2 flex flex-col shadow-2xl relative overflow-hidden">
+                {/* Shine effect */}
+                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 to-transparent" />
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full border border-white/20">
                     <Code2 className="w-4 h-4 text-white" />
@@ -338,21 +355,22 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
             </div>
           </div>
 
-          <div className="mt-8 pt-4 border-t border-white/10 flex justify-between items-end">
+          {/* Footer with enhanced styling */}
+          <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-end relative">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             <div className="space-y-1">
-              <p className="text-white/30 text-[9px] font-black uppercase tracking-[0.3em]">AI BEHAVIORAL ANALYSIS</p>
-              <p className="text-white font-black tracking-[0.2em] text-xl">LEETCODE<span className="text-primary italic">INSIGHT</span> AI</p>
+              <p className="text-white/40 text-[9px] font-black uppercase tracking-[0.3em]">AI BEHAVIORAL ANALYSIS</p>
+              <p className="text-white font-black tracking-[0.15em] text-xl">LEETCODE<span className="text-primary italic">INSIGHT</span> AI</p>
             </div>
-            <div className="flex items-center gap-10">
+            <div className="flex items-center gap-8">
               <div className="text-right">
-                <p className="text-white/30 text-[9px] font-black uppercase tracking-widest">Date Issued</p>
+                <p className="text-white/40 text-[9px] font-black uppercase tracking-widest">Date Issued</p>
                 <p className="text-white font-mono text-base font-bold">
                   {new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}
                 </p>
               </div>
-              <div className="w-20 h-20 bg-white p-2 rounded-xl group relative">
-                <div className="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/40 transition-all" />
-                <div className="w-full h-full bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://leetcode.com/u/${username}')] bg-cover relative z-10" />
+              <div className="w-20 h-20 bg-white p-2 rounded-xl relative shadow-lg shadow-white/20">
+                <div className="w-full h-full bg-cover" style={{ backgroundImage: `url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://leetcode.com/u/${username}')` }} />
               </div>
             </div>
           </div>

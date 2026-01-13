@@ -82,7 +82,7 @@ export const RadarChart = ({ data, size = 200, showLabels = true, className = ""
                     const lx = center + padding + labelDist * Math.cos(angle);
                     const ly = center + padding + labelDist * Math.sin(angle);
 
-                    let anchor = 'middle';
+                    let anchor: "start" | "middle" | "end" = 'middle';
                     if (Math.abs(Math.cos(angle)) > 0.1) {
                         if (Math.cos(angle) > 0) anchor = 'start';
                         else anchor = 'end';
@@ -95,15 +95,15 @@ export const RadarChart = ({ data, size = 200, showLabels = true, className = ""
 
                     return (
                         <g key={i}>
-                            <circle cx={pts[0]} cy={pts[1]} r="3" className="fill-white" />
+                            <circle cx={pts[0]} cy={pts[1]} r="3" fill="#ffffff" />
                             {showLabels && (
                                 <text
                                     x={lx}
                                     y={ly}
                                     dy={dy}
                                     textAnchor={anchor}
-                                    className="fill-white font-mono font-bold uppercase tracking-widest drop-shadow-md"
-                                    style={{ fontSize: Math.max(10, size / 22) }}
+                                    fill="#ffffff"
+                                    style={{ fontSize: Math.max(10, size / 22), fontFamily: 'monospace', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                                 >
                                     {a.label}
                                 </text>

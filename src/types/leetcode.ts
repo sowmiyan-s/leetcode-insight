@@ -1,3 +1,10 @@
+export interface ContestHistoryEntry {
+  contestTitle: string;
+  rating: number;
+  ranking: number;
+  date: string;
+}
+
 export interface LeetCodeProfile {
   username: string;
   avatar: string;
@@ -20,6 +27,7 @@ export interface LeetCodeProfile {
   languages: { name: string; value: number }[];
   recentSubmissions: { date: string; count: number }[];
   badges: { name: string; icon: string }[];
+  contestHistory?: ContestHistoryEntry[];
 }
 
 export interface LegitimacyIndicator {

@@ -8,9 +8,10 @@ interface ProfileHeaderProps {
   realName?: string;
   location?: string;
   aboutMe?: string;
+  totalSolved: number;
 }
 
-export const ProfileHeader = ({ username, avatar, realName, location, aboutMe }: ProfileHeaderProps) => {
+export const ProfileHeader = ({ username, avatar, realName, location, aboutMe, totalSolved }: ProfileHeaderProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -41,6 +42,17 @@ export const ProfileHeader = ({ username, avatar, realName, location, aboutMe }:
           </div>
         </motion.div>
 
+        {/* Total Solved Highlight (New) */}
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="hidden md:flex flex-col items-center justify-center p-4 bg-primary/10 rounded-2xl border border-primary/20 absolute right-8 top-1/2 -translate-y-1/2"
+        >
+          <span className="text-xs font-bold text-primary uppercase tracking-widest">Total Solved</span>
+          <span className="text-4xl font-black text-foreground">{totalSolved}</span>
+        </motion.div>
+
         {/* Info */}
         <div className="flex-1 text-center md:text-left">
           <motion.h2
@@ -51,7 +63,7 @@ export const ProfileHeader = ({ username, avatar, realName, location, aboutMe }:
           >
             {realName || username}
           </motion.h2>
-          
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

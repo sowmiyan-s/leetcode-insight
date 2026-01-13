@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { Shield, ShieldAlert, ShieldCheck, Trophy, Target, Flame, Code2, Star, Award, Brain, Zap, Globe, Fingerprint } from 'lucide-react';
 import { LegitimacyIndicator } from '@/types/leetcode';
+import { RadarChart } from '@/components/RadarChart';
 
 interface ShareableCardProps {
   username: string;
@@ -97,9 +98,6 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
     const protocolVersion = `V${2 + Math.floor(scores.overall / 50)}.${Math.floor((scores.overall % 50) / 5)}`;
 
     // 5-Axis Radar Chart Logic
-    const size = 200;
-    const center = size / 2;
-    const r = 75; // Reduced slightly for labels
     const axes = [
       { label: 'Consistency', value: scores.consistency },
       { label: 'Legitimacy', value: scores.legitimacy },
@@ -108,13 +106,6 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
       { label: 'Accuracy', value: scores.accuracy },
     ];
 
-    const getPoint = (index: number, value: number) => {
-      const angle = (index * 2 * Math.PI) / 5 - Math.PI / 2;
-      const dist = (value / 100) * r;
-      return `${center + dist * Math.cos(angle)},${center + dist * Math.sin(angle)}`;
-    };
-
-    const radarPath = axes.map((a, i) => getPoint(i, a.value)).join(' ');
 
     return (
       <div
@@ -235,58 +226,18 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
                     </div>
                   </div>
 
-                  <div className="relative p-0 bg-white/5 rounded-full border border-white/10">
-                    <svg width={size + 100} height={size + 100} className="drop-shadow-2xl">
-                      <g transform="translate(50,50)">
-                        {[0.2, 0.4, 0.6, 0.8, 1].map(scale => (
-                          <polygon
-                            key={scale}
-                            points={axes.map((_, i) => getPoint(i, 100 * scale)).join(' ')}
-                            fill="none"
-                            stroke="white"
-                            strokeOpacity={0.05}
-                            strokeWidth="1"
-                          />
-                        ))}
-                        <polygon
-                          points={radarPath}
-                          fill="rgba(var(--primary-rgb, 249, 115, 22), 0.15)"
-                          stroke="rgba(249,115,22,1)"
-                          strokeWidth="3"
-                        />
-                        {axes.map((a, i) => {
-                          const pts = getPoint(i, a.value).split(',');
-                          const angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
-                          // Label Position
-                          const labelR = r + 25;
-                          const lx = center + labelR * Math.cos(angle);
-                          const ly = center + labelR * Math.sin(angle);
-
-                          // Alignment
-                          let anchor = 'middle';
-                          if (i === 1 || i === 2) anchor = 'start'; // Right side
-                          if (i === 3 || i === 4) anchor = 'end';   // Left side
-
-                          return (
-                            <g key={i}>
-                              <circle cx={pts[0]} cy={pts[1]} r="3" fill="white" />
-                              <text
-                                x={lx}
-                                y={ly}
-                                textAnchor={anchor}
-                                dominantBaseline="middle"
-                                fill="rgba(255,255,255,0.5)"
-                                fontSize="10"
-                                fontWeight="800"
-                                className="uppercase tracking-widest font-mono"
-                              >
-                                {a.label}
-                              </text>
-                            </g>
-                          );
-                        })}
-                      </g>
-                    </svg>
+                  <div className="relative flex items-center justify-center p-4">
+                    <RadarChart
+                      data={{
+                        consistency: scores.consistency,
+                        legitimacy: scores.legitimacy,
+                        diversity: scores.diversity,
+                        complexity: scores.complexity,
+                        accuracy: scores.accuracy
+                      }}
+                      size={300}
+                      securityColor={security.color.split('-')[0]}
+                    />
                   </div>
                 </div>
               </div>
@@ -334,26 +285,26 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
 
             {/* AI and Security Column */}
             <div className="col-span-12 lg:col-span-5 space-y-4 flex flex-col h-full">
-              <div className="bg-gradient-to-br from-primary via-primary/90 to-accent p-6 rounded-[2.5rem] text-black h-1/2 flex flex-col shadow-xl">
+              <div className="bg-gradient-to-br from-primary via-primary/90 to-accent p-6 rounded-[2.5rem] text-white h-1/2 flex flex-col shadow-xl">
                 <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-2 bg-black/10 px-3 py-1 rounded-full border border-black/5">
-                    <Code2 className="w-4 h-4" />
-                    <span className="font-black uppercase tracking-widest text-[9px]">NEURAL ENGINE {protocolVersion}</span>
+                  <div className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full border border-white/20">
+                    <Code2 className="w-4 h-4 text-white" />
+                    <span className="font-black uppercase tracking-widest text-[9px] text-white">PERFORMANCE SUMMARY {protocolVersion}</span>
                   </div>
-                  <Star className="w-5 h-5 fill-black/20" />
+                  <Star className="w-5 h-5 fill-white/20 text-white" />
                 </div>
                 <div className="flex-1 overflow-hidden pr-2">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-black/40 mb-1">Cognitive Synthesis</p>
-                  <p className="text-lg font-black italic leading-[1.3] tracking-tight">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-white/60 mb-1">Cognitive Synthesis</p>
+                  <p className="text-lg font-black italic leading-[1.3] tracking-tight text-white">
                     "{aiAnalysis?.cognitive_synthesis || aiAnalysis?.summary || "Analyzing pattern recognition and complexity trajectories to synthesize behavioral insights..."}"
                   </p>
                 </div>
-                <div className="mt-4 pt-4 border-t border-black/10 flex justify-between items-end">
+                <div className="mt-4 pt-4 border-t border-white/20 flex justify-between items-end">
                   <div className="space-y-0.5">
-                    <p className="text-[8px] font-black uppercase tracking-widest text-black/40">Evaluation</p>
-                    <p className="font-black text-sm italic">{persona}</p>
+                    <p className="text-[8px] font-black uppercase tracking-widest text-white/60">Evaluation</p>
+                    <p className="font-black text-sm italic text-white">{persona}</p>
                   </div>
-                  <Brain className="w-8 h-8 opacity-20" />
+                  <Brain className="w-8 h-8 opacity-30 text-white" />
                 </div>
               </div>
 
@@ -406,7 +357,7 @@ export const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
             </div>
           </div>
         </div>
-      </div>
+      </div >
     );
   }
 );

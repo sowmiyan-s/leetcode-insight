@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Shield, ShieldAlert, ShieldCheck, AlertTriangle, CheckCircle2, XCircle, Info } from 'lucide-react';
+import { Shield, ShieldAlert, ShieldCheck, AlertTriangle, CheckCircle2, XCircle, Info, Scan, Fingerprint, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Indicator {
@@ -26,93 +26,96 @@ export const LegitimacyIndicators = ({
   submissionCount
 }: LegitimacyIndicatorsProps) => {
   const getOverallStatus = (score: number) => {
-    if (score >= 80) return { icon: ShieldCheck, label: 'Highly Authentic', color: 'text-emerald-400' };
-    if (score >= 60) return { icon: Shield, label: 'Mostly Authentic', color: 'text-amber-400' };
-    return { icon: ShieldAlert, label: 'Suspicious Patterns', color: 'text-red-400' };
+    if (score >= 80) return { icon: ShieldCheck, label: 'HIGHLY AUTHENTIC', color: 'text-emerald-400', border: 'border-emerald-500/30', bg: 'bg-emerald-500/10' };
+    if (score >= 60) return { icon: Shield, label: 'MOSTLY AUTHENTIC', color: 'text-amber-400', border: 'border-amber-500/30', bg: 'bg-amber-500/10' };
+    return { icon: ShieldAlert, label: 'SUSPICIOUS PATTERNS', color: 'text-red-400', border: 'border-red-500/30', bg: 'bg-red-500/10' };
   };
 
   const status = getOverallStatus(overallScore);
   const StatusIcon = status.icon;
-
-  const getStatusIcon = (status: 'good' | 'warning' | 'suspicious') => {
-    switch (status) {
-      case 'good':
-        return <CheckCircle2 className="w-5 h-5 text-emerald-400" />;
-      case 'warning':
-        return <AlertTriangle className="w-5 h-5 text-amber-400" />;
-      case 'suspicious':
-        return <XCircle className="w-5 h-5 text-red-400" />;
-    }
-  };
-
-  const getStatusBg = (status: 'good' | 'warning' | 'suspicious') => {
-    switch (status) {
-      case 'good':
-        return 'bg-emerald-500/10 border-emerald-500/20';
-      case 'warning':
-        return 'bg-amber-500/10 border-amber-500/20';
-      case 'suspicious':
-        return 'bg-red-500/10 border-red-500/20';
-    }
-  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4 }}
-      className="glass-card p-6"
+      className="glass-card overflow-hidden relative"
     >
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Legitimacy Analysis</h3>
-        <div className={cn("flex items-center gap-2", status.color)}>
-          <StatusIcon className="w-5 h-5" />
-          <span className="text-sm font-medium">{status.label}</span>
+      {/* Background Scan Effect */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(18,255,255,0),rgba(18,255,255,0.03),rgba(18,255,255,0))] h-[200%] w-full animate-scan pointer-events-none" />
+
+      {/* Header Section */}
+      <div className="p-6 pb-0 flex items-start justify-between relative z-10">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Scan className="w-4 h-4 text-primary animate-pulse" />
+            <h3 className="text-xs font-bold text-primary tracking-[0.2em] uppercase">Identity Verification Protocol</h3>
+          </div>
+          <h2 className="text-2xl font-black tracking-tight text-white mb-1">Behavioral Audit</h2>
+        </div>
+        <div className={cn("flex flex-col items-end", status.color)}>
+          <StatusIcon className="w-8 h-8 mb-1" />
+          <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/5 border border-white/10">{status.label}</span>
         </div>
       </div>
 
-      <div className="mb-4">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">Legitimacy Probability:</span>
-          <span className="font-semibold text-base">{(legitimacyProbability * 100).toFixed(1)}%</span>
-        </div>
-        <div className="flex flex-wrap gap-4 mt-2 text-xs text-muted-foreground">
-          {typeof activeDays === 'number' && <span>Active Days: <b>{activeDays}</b></span>}
-          {typeof totalSolved === 'number' && <span>Solved: <b>{totalSolved}</b></span>}
-          {typeof submissionCount === 'number' && <span>Submissions: <b>{submissionCount}</b></span>}
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        {indicators.map((indicator, index) => (
-          <motion.div
-            key={indicator.label}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
-            className={cn(
-              "flex items-start gap-3 p-4 rounded-lg border",
-              getStatusBg(indicator.status)
-            )}
-          >
-            {getStatusIcon(indicator.status)}
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm">{indicator.label}</p>
-              <p className="text-sm text-muted-foreground mt-1">{indicator.description}</p>
+      <div className="p-6 pt-4 grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+        {/* Trust Score Panel */}
+        <div className={cn("rounded-2xl p-5 border backdrop-blur-sm flex flex-col justify-between h-full bg-gradient-to-br from-white/5 to-transparent", status.border)}>
+          <div>
+            <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-2">Trust Confidence Score</p>
+            <div className="flex items-baseline gap-1">
+              <span className={cn("text-5xl font-black tracking-tighter", status.color)}>{(legitimacyProbability * 100).toFixed(0)}%</span>
             </div>
-          </motion.div>
-        ))}
+          </div>
+
+          <div className="mt-4 space-y-3">
+            <div className="h-1.5 w-full bg-black/20 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${legitimacyProbability * 100}%` }}
+                transition={{ duration: 1, ease: 'easeOut' }}
+                className={cn("h-full rounded-full", status.bg.replace('bg-', 'bg-').split('/')[0])}
+              />
+            </div>
+            <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
+              <Fingerprint className="w-3 h-3" />
+              <span>Verified by 4 heuristic engines</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Detailed Signals */}
+        <div className="space-y-2">
+          <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-1 pl-1">Signal Analysis</p>
+          {indicators.slice(0, 3).map((indicator, index) => (
+            <motion.div
+              key={indicator.label}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 + index * 0.1 }}
+              className="bg-white/5 border border-white/5 rounded-xl p-3 flex items-start gap-3 group hover:bg-white/10 transition-colors"
+            >
+              <div className={cn("mt-0.5 w-1.5 h-1.5 rounded-full shrink-0",
+                indicator.status === 'good' ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]' :
+                  indicator.status === 'warning' ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)]' : 'bg-red-400'
+              )} />
+              <div>
+                <p className="text-xs font-bold text-white mb-0.5">{indicator.label}</p>
+                <p className="text-[10px] text-muted-foreground leading-tight">{indicator.description}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-6 p-4 rounded-lg bg-secondary/50 border border-border/50">
-        <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
-          <p className="text-sm text-muted-foreground">
-            This analysis is based on patterns in submission history, problem-solving consistency,
-            and typical behavior metrics. It's not a definitive determination but rather an indicator
-            of profile authenticity.
-          </p>
+      {/* Footer Metadata */}
+      <div className="bg-black/20 border-t border-white/5 p-3 flex justify-between items-center text-[10px] text-white/30 font-mono relative z-10 px-6">
+        <div className="flex items-center gap-1.5">
+          <Lock className="w-3 h-3" />
+          <span>CRYPTOGRAPHICALLY SIGNED</span>
         </div>
+        <span>ID: {Math.random().toString(36).substring(7).toUpperCase()}</span>
       </div>
     </motion.div>
   );

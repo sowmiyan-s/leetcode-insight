@@ -11,6 +11,7 @@ import { SubmissionHeatmap } from '@/components/SubmissionHeatmap';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { ShareableCard } from '@/components/ShareableCard';
 import { AIAnalysisCard } from '@/components/AIAnalysisCard';
+import { RadarChart } from '@/components/RadarChart';
 import { Footer } from '@/components/Footer';
 import { useLeetCodeProfile } from '@/hooks/useLeetCodeProfile';
 import { useLeetCodeAI } from '@/hooks/useLeetCodeAI';
@@ -88,6 +89,7 @@ const Index = () => {
                 realName={analysis.profile.realName}
                 location={analysis.profile.location}
                 aboutMe={analysis.profile.aboutMe}
+                totalSolved={analysis.profile.totalSolved}
               />
 
               {/* Export Button */}
@@ -107,7 +109,7 @@ const Index = () => {
                   ) : (
                     <>
                       <Download className="w-5 h-5" />
-                      Download Social Media Post
+                      Download Report Card
                     </>
                   )}
                 </Button>
@@ -163,8 +165,33 @@ const Index = () => {
               </AnimatePresence>
 
               {/* Charts Row */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <LanguageChart languages={analysis.profile.languages} />
+
+                {/* Radar Chart (New) */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="glass-card p-6 flex flex-col items-center justify-center min-h-[300px]"
+                >
+                  <h3 className="text-lg font-bold mb-6 text-center w-full">Skill Composition</h3>
+                  <RadarChart
+                    data={{
+                      consistency: analysis.scores.consistency,
+                      legitimacy: analysis.scores.legitimacy,
+                      diversity: analysis.scores.diversity,
+                      complexity: analysis.scores.complexity,
+                      accuracy: analysis.scores.accuracy
+                    }}
+                    size={280}
+                    className="text-primary"
+                    securityColor="primary"
+                  />
+                </motion.div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-8">
                 <LegitimacyIndicators
                   indicators={analysis.indicators}
                   overallScore={analysis.scores.legitimacy}

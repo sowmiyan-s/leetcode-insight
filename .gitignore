@@ -21,9 +21,13 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+<<<<<<< HEAD
 
 # Secrets
 .env
 .env.local
 .env.*.local
+
+=======
+*.sw?
+>>>>>>> 9b4dd41b34cd7e828eff5a1d974a243df63165eb

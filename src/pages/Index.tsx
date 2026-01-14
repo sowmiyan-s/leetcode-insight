@@ -26,6 +26,7 @@ import { AnalysisResult } from '@/types/leetcode';
 import { Button } from '@/components/ui/button';
 import { Download, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -57,6 +58,25 @@ const Index = () => {
     if (!profileB) return null;
     return analyzeProfile(profileB);
   }, [profileB]);
+
+  // Log search to database when analysis is complete
+  useEffect(() => {
+    if (analysis && profile) {
+      const logSearch = async () => {
+        try {
+          await supabase.from('searches').insert({
+            username: profile.username,
+            score: analysis.scores.overall,
+            user_agent: navigator.userAgent,
+            profile_data: profile as any,
+          });
+        } catch (error) {
+          console.error('Failed to log search:', error);
+        }
+      };
+      logSearch();
+    }
+  }, [analysis?.scores.overall, profile?.username]);
 
   // Trigger AI analysis when profile is loaded
   useEffect(() => {

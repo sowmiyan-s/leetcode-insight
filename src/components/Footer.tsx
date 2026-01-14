@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Brain, ExternalLink, Shield } from 'lucide-react';
+import { Brain, ExternalLink } from 'lucide-react';
 
 export const Footer = () => {
     return (
@@ -33,11 +33,6 @@ export const Footer = () => {
                             </li>
                             <li>
                                 <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-                            </li>
-                            <li>
-                                <Link to="/admin" className="hover:text-primary transition-colors flex items-center gap-1">
-                                    <Shield className="h-3 w-3" /> Admin
-                                </Link>
                             </li>
                         </ul>
                     </div>

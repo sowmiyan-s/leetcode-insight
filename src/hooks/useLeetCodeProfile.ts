@@ -8,7 +8,7 @@ export const useLeetCodeProfile = (pollingIntervalMs: number = 0) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
-  const pollingRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { toast } = useToast();
 
   const fetchProfile = async (usernameToFetch?: string) => {

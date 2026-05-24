@@ -85,17 +85,18 @@ export const HeroSection = ({
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse-slow" />
       </div>
 
-      <motion.h1 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-3xl md:text-6xl font-bold text-center mb-4 tracking-tight">
-        <span className="gradient-text">LeetCode</span> <span className="text-foreground">Profile Analyzer</span>
-        <div className="flex justify-center mt-2">
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary uppercase tracking-widest animate-pulse">
-            <Sparkles className="w-3 h-3" />AI-Enhanced
-          </span>
-        </div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-center mb-4">
+        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary uppercase tracking-widest">
+          <Sparkles className="w-3 h-3" />AI-Enhanced Analysis
+        </span>
+      </motion.div>
+
+      <motion.h1 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-3xl md:text-6xl font-bold text-center mb-4 tracking-tight max-w-3xl">
+        Verify & <span className="gradient-text">Showcase</span> Your LeetCode Talent
       </motion.h1>
 
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="text-base md:text-xl text-muted-foreground text-center max-w-2xl mb-8 px-4">
-        Get deep insights into any LeetCode profile. Analyze patterns, expertise, and authenticity.
+        Instantly score any LeetCode profile on consistency, complexity, and authenticity — then share a polished report card with the world.
       </motion.p>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-4">
@@ -128,10 +129,17 @@ export const HeroSection = ({
         <SearchHistory history={history} onSelect={handleHistorySelect} onRemove={removeFromHistory} onClear={clearHistory} isVisible={showHistory && focusedInput !== null} />
       </motion.div>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-6 flex flex-wrap justify-center gap-2">
-        <span className="text-sm text-muted-foreground">Try:</span>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-6 flex flex-wrap justify-center items-center gap-2">
+        <span className="text-sm text-muted-foreground">Try an example:</span>
         {['neal_wu', 'tourist', 'jiangly'].map((name) => (
-          <button key={name} onClick={() => { setUrl(name); onAnalyze(name); onUsernameAnalyzed?.(name); }} className="text-sm text-primary hover:text-accent transition-colors font-mono" disabled={isLoading}>{name}</button>
+          <button
+            key={name}
+            onClick={() => { setUrl(name); onAnalyze(name); onUsernameAnalyzed?.(name); }}
+            className="text-sm px-3 py-1 rounded-full bg-primary/5 hover:bg-primary/10 border border-primary/20 text-primary transition-colors font-mono"
+            disabled={isLoading}
+          >
+            {name}
+          </button>
         ))}
       </motion.div>
     </section>

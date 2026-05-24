@@ -14,6 +14,8 @@ import { ShareableCard } from '@/components/ShareableCard';
 import { AIAnalysisCard } from '@/components/AIAnalysisCard';
 import { RadarChart } from '@/components/RadarChart';
 import { Footer } from '@/components/Footer';
+import { HowItWorks } from '@/components/HowItWorks';
+import { TrustCounter } from '@/components/TrustCounter';
 import { ErrorState } from '@/components/ErrorState';
 import { ShareButtons } from '@/components/ShareButtons';
 import { ContestHistory } from '@/components/ContestHistory';
@@ -171,6 +173,14 @@ const Index = () => {
           initialUsername={initialUsername}
           onUsernameAnalyzed={handleUsernameAnalyzed}
         />
+
+        {/* Trust signals + How it works show only before any analysis */}
+        {!analysis && !isLoading && !error && (
+          <>
+            <TrustCounter />
+            <HowItWorks />
+          </>
+        )}
 
         <AnimatePresence mode="wait">
           {/* Loading State */}
